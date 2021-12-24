@@ -1,0 +1,28 @@
+version: '3'
+
+################################################################################
+# NETWORKS
+################################################################################
+networks:
+  dev:             # Network name given  for this stack
+    name: dev-network       # Network pre existing name Compose has to look to connect your app's container
+
+################################################################################
+# SERVICES
+################################################################################
+services:
+  blog:
+    container_name: dev_env
+    image: node-env
+    # command: bash -c 'yarn watch && pm2-runtime logs'   # Depending of the scripts in your package.json
+    command: yarn watch:logs
+    ports:
+      - '5001:5001'
+    environment:
+      NODE_ENV: development
+
+    networks:
+      - dev
+    volumes:
+      - .:/usr/src/service
+    working_dir: /usr/src/service
