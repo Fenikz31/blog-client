@@ -1,27 +1,56 @@
 const path = require('path');
-const webpack = require('webpack');
+const { DefinePlugin, HotModuleReplacementPlugin } = require('webpack');
 const dotenv = require('dotenv');
 
 module.exports = () => {  
-  // call dotenv and it will return an Object with a parsed key 
-  const env = dotenv.config().parsed;
-  
-  // reduce it to a nice object, the same as before
-  const envKeys = Object.keys( env ).reduce(( prev, next ) => {
-    prev[`process.env.${ next }`] = JSON.stringify( env[next] );
-    return prev;
-  }, {});
+  const entry = path.resolve(__dirname, './src/index.js'),
+        home = path.resolve(__dirname, './dist'),
+        exclude = [
+          path.resolve( __dirname, './dist' ),
+          path.resolve( __dirname, 'node_modules' ),
+          home
+        ],
+        output = {
+          filename: 'bundle.js',
+          path: home
+        },
+        env = dotenv.config().parsed, // call dotenv and it will return an Object with a parsed key
+        envKeys = Object.keys( env ).reduce(( prev, next ) => {
+          prev[ `process.env.${ next }` ] = JSON.stringify( env[ next]  );
+          return prev;
+        }, {}), // reduce it to a nice object, the same as before
+        resolve = {
+          modules: [
+            __dirname,
+            path.resolve( __dirname, 'node_modules' )
+          ]
+        }
 
   return {
-    entry: [ 'react-hot-loader/patch', './src/index.js' ],
+    entry,
+
+    devServer: {
+      client: {
+        logging: 'verbose',
+        progress: true
+      },
+      compress: true,
+      historyApiFallback: true,
+      hot: true,
+      host: '0.0.0.0',
+      port: 5001,
+      static: home
+    },
+
+    devtool: 'source-map',
     mode: 'development',
+
     module: {
       rules: [
         {
           test: /\.(js|jsx)$/,
-          exclude: /(node_modules|bower_components)/,
-          loader: 'babel-loader',
-          options: { presets: [ '@babel/env' ]}
+          exclude,
+          use: [ 'babel-loader' ]
         },
         {
           test: /\.css$/,
@@ -29,21 +58,13 @@ module.exports = () => {
         }
       ]
     },
-    resolve: { extensions: [ '*', '.js','.jsx' ]},
-    output: {
-      path: path.resolve( __dirname, 'dist/' ),
-      publicPath: '/dist/',
-      filename: 'bundle.js'
-    },
-    devServer: {
-      contentBase: path.join( __dirname, 'public/' ),
-      port: 5001,
-      publicPath: 'http://localhost:5001/dist/',
-      hot: true
-    },
+
+    output,
+
     plugins: [
-      new webpack.DefinePlugin( envKeys ),
-      new webpack.HotModuleReplacementPlugin()
-    ]
+      new DefinePlugin( envKeys ),
+      new HotModuleReplacementPlugin()
+    ],
+    resolve
   }
 };

@@ -11,18 +11,21 @@ networks:
 # SERVICES
 ################################################################################
 services:
-  blog:
-    container_name: dev_env
-    image: node-env
-    # command: bash -c 'yarn watch && pm2-runtime logs'   # Depending of the scripts in your package.json
-    command: yarn watch:logs
+  client:
+    container_name: client-template
+    build:
+      context: .
+      dockerfile: Dockerfile
     ports:
       - '5001:5001'
+    
+    # stdin_open: true
     environment:
-      NODE_ENV: development
+      - CHOKIDAR_USEPOLLING=true
+      - NODE_OPTIONS=--openssl-legacy-provider
 
     networks:
       - dev
     volumes:
       - .:/usr/src/service
-    working_dir: /usr/src/service
+      # - ./node_modules:/usr/src/service/node_modules
