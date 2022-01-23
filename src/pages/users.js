@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { DataGrid } from '@mui/x-data-grid';
+import { DataGrid, GridToolbar } from '@mui/x-data-grid';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { MyDeleteOutline } from '../styles/styles';
@@ -111,7 +111,6 @@ export default function Users () {
   }, [ rows ])
 
   useEffect(() => {
-    console.log({ data })
     if ( data[ 0 ]?.id && data.length !== 0 && columns.length === 0 ) {
       handleColumns()
     }
@@ -131,6 +130,7 @@ export default function Users () {
             columns={ columns }
             pageSize={ 10 }
             checkboxSelection
+            components={{ Toolbar: GridToolbar }} 
           />
         { renderModal() }
       </Box>
