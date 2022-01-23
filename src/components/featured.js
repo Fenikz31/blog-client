@@ -2,10 +2,11 @@ import React from 'react';
 import { ArrowUpward } from '@material-ui/icons';
 import styled from 'styled-components';
 import { featured_data } from '../dummy'
+import { Box } from '@mui/material';
 
 export default function Featured () {
   return (
-    <Container>
+    <Box sx={{ display: 'flex', justifyContent: 'space-between', p: 2, width: '100%' }} >
       {
         featured_data && featured_data.map(( item, index ) => (
           <Item key={ index } >
@@ -18,7 +19,7 @@ export default function Featured () {
           </Item>
         ))
       }
-    </Container>
+    </Box>
   )
 }
 

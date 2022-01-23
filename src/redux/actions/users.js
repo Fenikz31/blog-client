@@ -4,13 +4,27 @@ import { USERS } from '../constants';
 const { API_URL } = process.env;
 export const get_users = () => async ( dispatch ) => {
   try {
-    const response = await axios.get( `${ API_URL }admin/users/admin/all`)
+    const { data, status } = await axios.get( `${ API_URL }admin/users/admin/all`)
 
-    dispatch({ type: USERS.GET.ALL.SUCCESS, payload: { ...response.data }})
+    dispatch({ type: USERS.GET.ALL.SUCCESS, status, ...data })
   }
   catch( err ){
-    if ( err ) {
-      dispatch({ type: USERS.GET.ALL.FAILURE, reason: err })
-    }
+    const { response } = err,
+          { data, status } = response;
+
+    dispatch({ type: USERS.GET.ALL.FAILURE, status, ...data })
+  }
+}
+export const get_user = ( id ) => async ( dispatch ) => {
+  try {
+    const { data, status } = await axios.get( `${ API_URL }admin/users/${ id }`)
+
+    dispatch({ type: USERS.GET.ONE.SUCCESS, status, ...data })
+  }
+  catch( err ){
+    const { response } = err,
+          { data, status } = response;
+
+    dispatch({ type: USERS.GET.ONE.FAILURE, status, ...data })
   }
 }

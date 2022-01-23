@@ -1,28 +1,42 @@
-import React from 'react';
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import React, { forwardRef, useState } from 'react';
+import { useSelector } from 'react-redux';
+import { BrowserRouter as Router, Link, Link as RouterLink, Navigate, Route, Routes, useLocation, useNavigate } from 'react-router-dom';
 
 import Navbar from './components/navbar';
-import SideBar from './components/side';
-import User from './components/user';
-import Users from './components/users';
-import Home from './containers/home';
+import Snackbars from './components/snackbar';
+
+import Dashboard from './pages/dashboard';
+import Login from './pages/login';
+import Users from './pages/users';
 
 import './app.css';
+import { Box, Tab, Tabs } from '@mui/material';
+import { TabPanel } from './components/panel';
+import AppContainer from './containers/appContainer';
+
+function tabProps( index ) {
+  return {
+    id: `vertical-tab-${index}`,
+    'aria-controls': `vertical-tabpanel-${index}`,
+  };
+}
 
 export default function App () {
+  const { auth, info }  = useSelector(( state ) => state ),
+        { isAuth, profile } = auth,
+        { code, message, reason, status } = info;
+
   return (
-    <Router>
-      <div className='App'>
-        < Navbar/>
-        <div className='container'>
-          <SideBar />
-            <Routes>
-              <Route index exact path='/' element={ <Home /> } />
-              <Route path='/users' element={ <Users /> } />
-              <Route path='/users/:id' element={ <User /> } />
-            </Routes>
-        </div>
-      </div>
-    </Router>
+    <AppContainer>
+      <Snackbars code={ code } message={ message } reason={ reason } status={ status }  /> 
+    </AppContainer>
   )
+}
+
+function ProtectedRoutes ({ auth, children } = {}) {
+  if ( auth )
+    return children
+
+  const location = useLocation()
+  return <Navigate to='/login' state={{ from: location }} replace />
 }

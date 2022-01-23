@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { CalendarToday, LocationSearching, MailOutline, PermIdentity, PhoneAndroid, Publish } from '@material-ui/icons';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
@@ -6,100 +6,104 @@ import styled from 'styled-components';
 import { useParams } from 'react-router';
 
 import { ItemAddButton, ItemContainer, ItemShowImg, ItemTitleContainer, ItemUpdateButton, ItemUpload, ItemUploadImg } from '../styles/styles';
+import { Button, MenuItem, Select } from '@material-ui/core';
+import { get_user } from '../redux/actions/users';
 
-export default function User() {
-  const { id } = useParams(),
+export default function User({ data = null } = {}) {
+  const [ user, setUser ] = useState( false )
+  const /* { id } = useParams(),
         dispatch = useDispatch(),
-        { loading, rows } = useSelector(({ users })=> users ),
-        action = useSelector(({ action })=> action.type ),
-        { avatar, city, country, createdAt, email, firstname, lastname, role, updatedAt, username } = rows.filter(({ _id }) => _id === id)[0],
-        fullname = `${ firstname } ${ lastname }`
- 
+        { action, users } = useSelector(( state ) => state ),
+        { loading, rows } = users,
+        */
+        { avatar, city, country, created, email, firstname, lastname, role, updated, username } = data, 
+        [ values, setValues ] = useState({
+          avatar: data ? data.avatar : '',
+          city: data ? data.city : '',
+          country: data ? data.country : '',
+          created: data ? data.created : '',
+          email: data ? data.email : '',
+          firstname: data ? data.firstname : '',
+          lastname: data ? data.lastname : '',
+          role: data ? data.role : '',
+          updated: data ? data.updated : '',
+          username: data ? data.username : ''
+        }),
+        fullname = `${ values.firstname } ${ values.lastname }`
+  function handleChange ( event ) {
+    const { files, name, value } = event.target
+    console.log( 'event target name => ', name )
+    console.log( 'event target value => ', value )
+    if ( name !== 'avatar' )
+      return setValues({ ...values, [ name ]: value })
+
+    console.log( 'event target files => ', files[0] )
+  }
+
   return (
     <ItemContainer>
-      <ItemTitleContainer>
-        <h1>Edit User</h1>
-        <Link to='/newUser'>
-          <ItemAddButton>Create</ItemAddButton>
-        </Link>
-      </ItemTitleContainer>
       <UserContainer>
-        <ShowUser>
-          <ShowUserTop>
-            <ItemShowImg
-              src={ avatar }
-              alt='show-image'
-            />
-            <ShowTopTitle>
-              <FontWeight bolder>{ fullname }</FontWeight>
-              <FontWeight>{ role }</FontWeight>
-            </ShowTopTitle>
-          </ShowUserTop>
-          <ShowUserBottom>
-            <UserShowTitle>Account Details</UserShowTitle>
-            <UserShowInfo>
-              <PermIdentity className='showIcon' />
-              <span className='showInfoTitle'>{ username }</span>
-            </UserShowInfo>
-            <UserShowInfo>
-            <UserShowTitle>Created at</UserShowTitle>
-              <CalendarToday className='showIcon' />
-              <span className='showInfoTitle'>{ createdAt.split('T')[ 0 ] }</span>
-            </UserShowInfo>
-            <UserShowInfo>
-            <UserShowTitle>Updated at</UserShowTitle>
-              <CalendarToday className='showIcon' />
-              <span className='showInfoTitle'>{ updatedAt.split('T')[ 0 ] }</span>
-            </UserShowInfo>
-            <UserShowTitle>Contact Details</UserShowTitle>
-            <UserShowInfo>
-              <MailOutline className='showIcon' />
-              <span className='showInfoTitle'>{ email }</span>
-            </UserShowInfo>
-            <UserShowInfo>
-              <LocationSearching className='showIcon' />
-              <span className='showInfoTitle'>{ city ? city : null } | { country? country : null }</span>
-            </UserShowInfo>
-          </ShowUserBottom>
-        </ShowUser>
         <UpdateUser>
-          <UpdateTitle>Edit</UpdateTitle>
           <UpdateForm>
             <div>
-              <UpdateItem>
-                <label>Username</label>
-                <input
-                  type='text'
-                  placeholder={ username }
-                />
-              </UpdateItem>
               <UpdateItem>
                 <label>Full Name</label>
                 <input
                   type='text'
+                  disabled
                   placeholder={ fullname }
+                />
+              </UpdateItem>
+              <UpdateItem>
+                <label>Username</label>
+                <input
+                  type='text'
+                  name='username'
+                  onChange={ handleChange }
+                  placeholder={ values.username }
                 />
               </UpdateItem>
               <UpdateItem>
                 <label>Email</label>
                 <input
                   type='text'
-                  placeholder={ email }
+                  name='email'
+                  onChange={ handleChange }
+                  placeholder={ values.email }
                 />
               </UpdateItem>
               <UpdateItem>
                 <label>City</label>
                 <input
                   type='text'
-                  placeholder={ city }
+                  name='city'
+                  onChange={ handleChange }
+                  placeholder={ values.city }
                 />
               </UpdateItem>
               <UpdateItem>
                 <label>Country</label>
                 <input
                   type='text'
-                  placeholder={ country }
+                  name='country'
+                  onChange={ handleChange }
+                  placeholder={ values.country }
                 />
+              </UpdateItem>
+              <UpdateItem>
+                <label>Role</label>
+                <Select
+                  label='Role'
+                  name='role'
+                  onChange={ handleChange }
+                  value={ values.role }
+                >
+                  {
+                    [ 'admin', 'author', 'reader', 'guest', 'user' ].map(( role ) =>{
+                      return ( <MenuItem key={ role } value={ role }>{ role }</MenuItem> )
+                    })
+                  }
+                </Select>
               </UpdateItem>
             </div>
             <UpdateRight>
@@ -111,9 +115,14 @@ export default function User() {
                 <label htmlFor='file'>
                   <MyPublish />
                 </label>
-                <input type='file' id='file' style={{ display: 'none' }} />
+                <input
+                  type='file'
+                  id='file'
+                  style={{ display: 'none' }}
+                  name='avatar'
+                  onChange={ handleChange }
+                  onClick={( e ) => console.log( values, 'upload => ', e.target.files[0] )} />
               </ItemUpload>
-              <ItemUpdateButton>Update</ItemUpdateButton>
             </UpdateRight>
           </UpdateForm>
         </UpdateUser>
@@ -156,6 +165,7 @@ const UserShowTitle = styled.span`
     font-size: 14px;
     font-weight: 600;
     color: rgb(175, 170, 170);
+    padding-right: 8px;
 `
 const UserShowInfo = styled.div`
     display: flex;
@@ -188,7 +198,7 @@ const UpdateItem = styled.div`
     }
     input{
         border: none;
-        width: 250px;
+        width: 200px;
         height: 30px;
         border-bottom: 1px solid gray;
     }

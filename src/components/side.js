@@ -1,127 +1,104 @@
-import React from 'react'
-import { LineStyle, Timeline, TrendingUp, PermIdentity, Storefront, LocalAtm, Assessment, Drafts, Feedback, Forum, Work, Receipt, PieChart } from '@material-ui/icons';
-import styled, { css } from 'styled-components';
-import { Link, useMatch, useResolvedPath } from 'react-router-dom';
+import React, { useState } from 'react'
+import { Box, Tab, Tabs, Typography } from '@mui/material';
+import { Link, matchPath, Route, Routes, useLocation } from 'react-router-dom';
+import { TabPanel } from './panel';
+import Router from './Router';
+import Login from '../pages/login';
 
-export default function SideBar () {
-  function SidebarListItem ({ children ,to, ...props } = {}) {
-    const resolved = useResolvedPath( to ),
-          match = useMatch({ path: resolved.pathname, end: true })
-    return (
-      <Link
-        style={{
-          padding: 5,
-          cursor: 'pointer',
-          display: 'flex',
-          textDecoration: 'none',
-          alignItems: 'center',
-          borderRadius: 10,
-          backgroundColor: match ? 'rgb(108, 110, 118)' : 'rgb(240, 240, 255)',
-          color: match ? 'rgb(240, 240, 255)' : 'rgb(108, 110, 118)',
-          hover: {
-            color: 'rgb(240, 240, 255)',
-            backgroundColor: 'rgb(108, 110, 118)'
-          }
-        }}
-        to={ to }
-        { ...props } >
-        { children }
-      </Link>
-    )
-  }
-  
-  return (
-    <SidebarContainer>
-      <SidebarWrapper>
-        <SidebarMenu>
-          <SidebarTitle>Dashboard</SidebarTitle>
-          <SidebarList>
-            <SidebarListItem to='/' >
-              <MyLineStyle />
-              Home
-            </SidebarListItem>
-          </SidebarList>
-        </SidebarMenu>
-        <SidebarMenu>
-          <SidebarTitle>Categories</SidebarTitle>
-          <SidebarList>
-            <SidebarListItem to='users'>
-              <MyPermIdentity />
-              Users
-            </SidebarListItem>
-          </SidebarList>
-        </SidebarMenu>
-      </SidebarWrapper>
-    </SidebarContainer>
-  )
+function ProtectedRoutes ({ auth, children } = {}) {
+  if ( auth )
+    return children
+
+  const location = useLocation()
+  return <Navigate to='/login' state={{ from: location }} replace />
 }
 
-const SidebarContainer = styled.div`
-flex: 1;
-height: calc(100vh - 50px);
-background-color: rgb(251, 251, 255);
-position: sticky;
-top: 50px;
-max-width: 290px;
-box-shadow: 0px 0px 15px -10px rgb(0 0 0 / 75%);
-`
-const SidebarWrapper = styled.div`
-padding: 20px;
-color: #555;
-`
-const SidebarMenu = styled.div`
-margin-bottom: 10px;
-`
-const SidebarTitle = styled.h3`
-font-size: 13px;
-color: rgb(187, 186, 186);
-`
-const SidebarList = styled.ul`
-list-style: none;
-padding: 5px;
-width: 240px;
-`
+function renderLinks (  tabs ) {
+  /* 
+  You need to provide the routes in descendant order.
+  This means that if you have nested routes like:
+  users, users/new, users/edit.
+  Then the order should be ['users/add', 'users/edit', 'users'].
+   */
+  return tabs.map(( tab, index ) => {
+    
+    if ( tab.label ) {
+      const label = tab.label && tab.label === 'Dashboard' ? '' : `${ tab.label.toLowerCase() }`
+      return (
+        <Tab
+          key={ index }
+          label={ tab.label }
+          style={{ textDecoration: 'none' }}
+          to={`/${ label }` }
+          component={ Link }
+          { ...tabProps( index )} />
+      )
+    }
 
-const sharedStyle = css`
-  margin-right: 5px;
-  font-size: 20px !important;
-`
-const MyLineStyle = styled( LineStyle )`
-  ${ sharedStyle }
-`
-const MyTimeline = styled( Timeline )`
-  ${ sharedStyle }
-`
-const MyTrendingUp = styled( TrendingUp )`
-  ${ sharedStyle }
-`
-const MyPermIdentity = styled( PermIdentity )`
-  ${ sharedStyle }
-`
-const MyStorefront = styled( Storefront )`
-  ${ sharedStyle }
-`
-const MyAssessment = styled( Assessment )`
-  ${ sharedStyle }
-`
-const MyLocalAtm = styled( LocalAtm )`
-  ${ sharedStyle }
-`
-const MyDrafts = styled( Drafts )`
-  ${ sharedStyle }
-`
-const MyFeedback = styled( Feedback )`
-  ${ sharedStyle }
-`
-const MyForum = styled( Forum )`
-  ${ sharedStyle }
-`
-const MyWork = styled( Work )`
-  ${ sharedStyle }
-`
-const MyPieChart = styled( PieChart )`
-  ${ sharedStyle }
-`
-const MyReceipt = styled( Receipt )`
-  ${ sharedStyle }
-`
+      return null
+    })
+
+}
+
+
+function tabProps( index ) {
+  return {
+    id: `vertical-tab-${index}`,
+    'aria-controls': `vertical-tabpanel-${index}`,
+  };
+}
+
+function useRouteMatch( tabs ) {
+  const { pathname } = useLocation();
+
+  if ( tabs.length === 0 )
+    return null
+
+  return tabs.map(({ label,location }, index) => {
+    const match = matchPath( location, pathname )
+    console.log( 'match => ', match )
+    if ( label === 'Login')
+      return null
+
+    if ( match )
+      return index
+
+    return null
+  })
+  .filter(( nullish ) => nullish !== null )[ 0 ]
+}
+
+export default function SideBar ({ children, isAuth } = {}) {
+  const tabs = [
+          '/',
+          '/users'
+        ],
+        [ value, setValue ] = useState( 0 );
+
+  function handleChange ( event, value ) {
+  setValue( value ); 
+  }
+
+  return (
+    <Tabs
+      orientation='vertical'
+      variant='scrollable'
+      value={ value }
+      onChange={ handleChange }
+      aria-label='Vertical tabs example'
+      selectionFollowsFocus          
+      sx={{ borderRight: 1, borderColor: 'divider', height: '100%' }}
+    >
+      <Tab
+        label='Dashboard'
+        component={ Link }
+        to='/'
+        />
+      <Tab
+        label='Users'
+        component={ Link }
+        to='/users'
+        />
+    </Tabs>
+  )
+}

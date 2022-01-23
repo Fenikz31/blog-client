@@ -63,6 +63,18 @@ export const ListImage = styled.img`
     object-fit: cover;
     margin-right: 10px;
 `
+
+export const LoginButton = styled.button`
+    background-color: red;
+    border: none;
+    color: white;
+    border-radius: 5px;
+    padding: 5px 15px;
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+`
+
 export const EditButton = styled.button`
     border: none;
     border-radius: 10px;

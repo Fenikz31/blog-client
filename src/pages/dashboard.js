@@ -8,14 +8,15 @@ import Small from '../components/small';
 
 import { user_data } from '../dummy';
 
-export default function Home () {
+export default function Dashboard () {
   return (
-    <Box sx={{ height: '100%', width: '100%' }}>
+    <Box sx={{ alignItems: 'center', display: 'flex', flexDirection: 'column', height: '100%', width: '100%' }}>
+      <Featured />
+      <Chart data={ user_data } title={ 'User analytics' } grid dataKey='Active user' />
     </Box>
   )
 }
-      {/* <Featured />
-      <Chart data={ user_data } title={ 'User analytics' } grid dataKey='Active user' />
+      {/* 
       <Widgets>
         <Small />
         <Large />

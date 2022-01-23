@@ -2,7 +2,6 @@ import axios from 'axios';
 import { ARTICLES, AUTH, TOGGLE } from '../constants';
 
 const { API_URL } = process.env;
-
 export const load_articles = () => (dispatch) => {
   axios.get( `${ API_URL }/articles` )
   .then(( res ) => {
@@ -59,15 +58,18 @@ export const clap = ( article_id ) => ( dispatch ) => {
 //   .catch(( err )=>console.log(err))        
 // }
 
-export const login = ( user_data ) => ( dispatch ) => {
-  axios.post( `${ API_URL }/auth/login`, user_data)
+export const login = ( data ) => ( dispatch ) => {
+  axios.post( `${ API_URL }admin/auth/login`, data)
   .then(( res ) =>{
-    const user = res.data
+    const response = res.data
     // TODO: SQLite for react-native
-    localStorage.setItem('Auth', JSON.stringify( user ))
-    dispatch({ type: AUTH.SET.USER.SUCCESS, user })
+    localStorage.setItem('Auth', JSON.stringify( response ))
+    dispatch({ type: AUTH.SET.USER.SUCCESS, ...response })
   })
-  .catch(( err ) => dispatch({ type: AUTH.SET.USER.FAILURE, user }))
+  .catch(({ response }) => {
+    const { data, status } = response
+    dispatch({ type: AUTH.SET.USER.FAILURE, status, ...data })
+  })
 }
 
 export const toggleClose = () => ( dispatch ) => dispatch({ type: TOGGLE.MODAL.SUCCESS, modalMode: false })

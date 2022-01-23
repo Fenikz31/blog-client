@@ -1,20 +1,19 @@
 import { AUTH } from '../constants'
 
 const initialState = {
-  user: {},
   isAuth: false,
   profile: {}
 };
 
 export default ( state = initialState, action ) => {
-  const { profile, type, user } = action;
+  const { profile, type, result } = action;
   
   switch ( type ) {
     case AUTH.SET.USER.SUCCESS:
       return {
         ...state,
-        isAuth: Object.keys( user ).length > 0 ? true : false,
-        user
+        isAuth: Object.keys( result ).length > 0 ? true : false,
+        profile: result
       }
 
     case AUTH.FOLLOW.SUCCESS:
