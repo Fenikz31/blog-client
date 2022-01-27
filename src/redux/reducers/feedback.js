@@ -13,6 +13,7 @@ export default ( state = defaultState, { code, message, reason, status, type }) 
     case ARTICLES.CLAP.FAILURE:
     case ARTICLES.COMMENT.FAILURE:
     case ARTICLES.LOAD.FAILURE:
+    case ARTICLES.PUBLISH.FAILURE:
     case ARTICLES.UNCLAP.FAILURE:
     case ARTICLES.VIEW.FAILURE:
     case AUTH.FOLLOW.FAILURE:
@@ -23,6 +24,12 @@ export default ( state = defaultState, { code, message, reason, status, type }) 
     case TOGGLE.MODAL.FAILURE:
       return { code, message, reason, status }
 
+    case ARTICLES.CLAP.SUCCESS:
+    case ARTICLES.COMMENT.SUCCESS:
+    case ARTICLES.LOAD.SUCCESS:
+    case ARTICLES.PUBLISH.SUCCESS:
+    case ARTICLES.UNCLAP.SUCCESS:
+    case ARTICLES.VIEW.SUCCESS:
     case AUTH.SET.USER.SUCCESS:
     case USERS.GET.ALL.SUCCESS:
     case USERS.GET.ONE.SUCCESS:

@@ -1,6 +1,8 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
 import { Navigate, Route, Routes, useLocation } from 'react-router-dom';
+
+import Blog from '../pages/blog';
 import Dashboard from '../pages/dashboard';
 import Login from '../pages/login';
 import Users from '../pages/users';
@@ -24,9 +26,14 @@ export default function Router ({ children, tabs, ...rest } = {}) {
           <Dashboard key={ 0 }/>
         </ProtectedRoutes>
       } />
+      <Route path='/blog' element={
+        <ProtectedRoutes auth={ isAuth } >
+          <Blog key={ 1 } />
+        </ProtectedRoutes>
+      } />
       <Route path='/users' element={
         <ProtectedRoutes auth={ isAuth } >
-          <Users key={ 1 } />
+          <Users key={ 2 } />
         </ProtectedRoutes>
       } />
       <Route path='/login' element={ <Login /> } />

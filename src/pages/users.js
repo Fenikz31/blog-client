@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { DataGrid, GridToolbar } from '@mui/x-data-grid';
+import { formatDistanceToNow, parseISO } from 'date-fns';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { MyDeleteOutline } from '../styles/styles';
@@ -28,7 +29,15 @@ export default function Users () {
           columns = fields.map(( field ) => ({
             field,
             headerName:  `${ field.charAt( 0 ).toUpperCase() }${ field.slice( 1 ) }`,
-            valueGetter: ( params ) => [ 'created', 'updated' ].indexOf( field ) !== -1 ? params.row[ field ].split( 'T' )[0] : params.row[ field ],
+            valueGetter: ( params ) => {
+              if ( field === 'created' )
+                return formatDistanceToNow( parseISO( params.row[ field ]))
+
+              if ( field === 'updated' )
+                return formatDistanceToNow( parseISO( params.row[ field ]))
+              
+              return params.row[ field ]
+            },
             width: 140
           }))
 

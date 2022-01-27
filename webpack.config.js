@@ -36,7 +36,6 @@ module.exports = () => {
       },
       compress: true,
       historyApiFallback: true,
-      hot: true,
       host: '0.0.0.0',
       port: 5001,
       static: home

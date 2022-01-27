@@ -2,7 +2,7 @@ import { Snackbar } from '@material-ui/core';
 import { Alert as MuiAlert, Stack } from '@mui/material';
 import React, { forwardRef, useEffect, useState } from 'react';
 import { useSelector, useStore } from 'react-redux';
-import { AUTH, USERS } from '../redux/constants';
+import { ARTICLES, AUTH, USERS } from '../redux/constants';
 
 const Alert = forwardRef(
   function Alert( props, ref ) {
@@ -40,6 +40,8 @@ export default function Snackbars({ code, message, reason, status } = {}) {
 
   useEffect(() => {
     switch ( action ) {
+      case ARTICLES.PUBLISH.FAILURE:
+      case ARTICLES.PUBLISH.SUCCESS:
       case AUTH.SET.USER.FAILURE:
       case AUTH.SET.USER.SUCCESS:
       case USERS.GET.ALL.FAILURE:

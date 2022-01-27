@@ -71,6 +71,7 @@ function useRouteMatch( tabs ) {
 export default function SideBar ({ children, isAuth } = {}) {
   const tabs = [
           '/',
+          '/blog',
           '/users'
         ],
         [ value, setValue ] = useState( 0 );
@@ -93,6 +94,11 @@ export default function SideBar ({ children, isAuth } = {}) {
         label='Dashboard'
         component={ Link }
         to='/'
+        />
+      <Tab
+        label='Blog'
+        component={ Link }
+        to='/blog'
         />
       <Tab
         label='Users'

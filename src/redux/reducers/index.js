@@ -3,7 +3,7 @@ import { combineReducers } from 'redux';
 import articles from './articles';
 import auth from './auth';
 import common from './common';
-import info from './info';
+import feedback from './feedback';
 import users from './users';
 
 import { routerReducer } from 'react-router-redux';
@@ -15,7 +15,7 @@ export default combineReducers({
   articles,
   auth,
   common,
-  info,
+  feedback,
   router: routerReducer,
   users
 });

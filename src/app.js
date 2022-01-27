@@ -22,9 +22,9 @@ function tabProps( index ) {
 }
 
 export default function App () {
-  const { auth, info }  = useSelector(( state ) => state ),
+  const { auth, feedback }  = useSelector(( state ) => state ),
         { isAuth, profile } = auth,
-        { code, message, reason, status } = info;
+        { code, message, reason, status } = feedback;
 
   return (
     <AppContainer>

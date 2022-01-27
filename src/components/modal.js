@@ -21,17 +21,13 @@ export default function Modal({
     update: null
   },
   children,
-  Component,
   data = null,
   id = null,
   title = null,
-  type = 'search'
+  type = 'search',
+  ...rest
 } = {}) {
   const [ open, setOpen ] = useState( true )
-
-  console.log( 'data => ', data )
-  console.log( 'title => ', title )
-  console.log( 'type => ', type )
 
   function handleClose () {
     setOpen( false )
@@ -104,7 +100,7 @@ export default function Modal({
   function renderButtonRemove () {
     if ( type === 'update' ) {
       return (
-        <Button onClick={ handleDelete } color='secondary' endIcon={ <Delete /> } variant='contained' title='CANCEL'>CANCEL</Button>
+        <Button onClick={ handleDelete } color='error' endIcon={ <Delete /> } variant='contained' title='CANCEL'>CANCEL</Button>
       )
     }
   }
@@ -112,7 +108,7 @@ export default function Modal({
   function renderButtonReset () {
     if (type === 'search') {
       return (
-        <Button onClick={ handleReset } color='secondary' endIcon={ <Delete /> } variant='contained' title='RESET'>RESET</Button>
+        <Button onClick={ handleReset } color='error' endIcon={ <Delete /> } variant='contained' title='RESET'>RESET</Button>
       )
     }
   }
@@ -136,12 +132,14 @@ export default function Modal({
   return (
     <div>
       <Dialog
-        open={ open }
-        TransitionComponent={ Transition }
-        keepMounted
-        onClose={ handleClose }
-        maxWidth='md'
         aria-describedby='alert-dialog-slide-description'
+        keepMounted
+        maxWidth={ rest.maxWidth || 'md' }
+        onClose={ handleClose }
+        open={ open }
+        scroll='paper'
+        TransitionComponent={ Transition }
+        { ...rest }
       >
         <DialogTitle>{ title }</DialogTitle>
         <DialogContent>

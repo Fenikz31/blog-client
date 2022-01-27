@@ -1,27 +1,26 @@
 import { ARTICLES } from '../constants'
 
 const initialState = {
-  articles: [],
+  rows: [],
   article: {}
 };
 
-export default ( state = initialState, action ) => {
-  const { article, articles, type } = action;
+export default ( state = initialState, { result, type } ) => {
   
   switch ( type ) {
       case ARTICLES.LOAD.SUCCESS :
         return {
           ...state,
-          articles
+          rows: result
         }
 
       case ARTICLES.VIEW.SUCCESS:
         return {
           ...state,
-          article
+          article: result
         }
 
-      case ARTICLES.CLAP.SUCCESS:
+      /* case ARTICLES.CLAP.SUCCESS:
         article = {
           ...state.article,
           claps: article.claps++
@@ -31,7 +30,7 @@ export default ( state = initialState, action ) => {
         return {
           ...state,
           article
-        }
+        } */
 
       default:
         return state

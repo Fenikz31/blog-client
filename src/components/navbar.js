@@ -41,7 +41,7 @@ export default function Navbar ({ isAuth, profile } = {}) {
             component="div"
             sx={{ mr: 2, display: { xs: 'none', md: 'flex', xl: 'flex' } }}
           >
-            BlogFenikz
+            Links Admin
           </Typography>
 
 
