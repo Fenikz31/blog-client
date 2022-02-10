@@ -1,30 +1,45 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Language, NotificationsNone, Settings } from '@material-ui/icons';
 import styled from 'styled-components';
 import { AppBar, Badge, Box, Container, IconButton, Stack, Toolbar, Tooltip, Typography } from '@mui/material';
+import AccountMenu from './menu';
 
 export default function Navbar ({ isAuth, profile } = {}) {
-  const { avatar, notifications } = profile
+  const { avatar, notifications } = profile,
+        [ anchorEl, setAnchorEl ] = useState( null ),
+        open = Boolean( anchorEl );
+
+  function handleClick( e ) {
+    setAnchorEl( e.currentTarget )
+  }
+
+  function handleClose() {
+    setAnchorEl( null )
+  }
 
   function renderTopRight() {
     if ( isAuth )
       return (
-      <Stack direction='row' spacing={ 2 } sx={{ alignItems: 'center' }}>
-        <Badge badgeContent={ notifications.length } color='error'>
-          <NotificationsNone style={{ color: 'white', display: 'block', padding: 2 }}/>
-        </Badge>
-        <Badge badgeContent={ notifications.length } color='error'>
-          <Language style={{ color: 'white', display: 'block' }}/>
-        </Badge>
-        <Tooltip sx={{ color: 'white', display: 'block' }} title='Open settings'>
-          <IconButton >
-            <Settings />
-          </IconButton>
-        </Tooltip>
-        <IconButton sx={{ color: 'white', display: 'block' }}>
-          <Avatar src={`${ avatar }`} alt='avatar' />
-        </IconButton>
-      </Stack>
+        <>
+          <Stack direction='row' spacing={ 2 } sx={{ alignItems: 'center' }}>
+            <Badge badgeContent={ notifications.length } color='error'>
+              <NotificationsNone style={{ color: 'white', display: 'block', padding: 2 }}/>
+            </Badge>
+            <Badge badgeContent={ notifications.length } color='error'>
+              <Language style={{ color: 'white', display: 'block' }}/>
+            </Badge>
+            <Tooltip sx={{ color: 'white', display: 'block' }} title='Open settings'>
+              <IconButton >
+                <Settings />
+              </IconButton>
+            </Tooltip>
+            <IconButton onClick={ handleClick } sx={{ color: 'white', display: 'block' }}>
+              <Avatar src={`${ avatar }`} alt='avatar' />
+            </IconButton>
+          </Stack>
+          <AccountMenu anchorEl={ anchorEl } open={ open } onClose={ handleClose } />
+        </>
+
       )
       
     return null
@@ -33,12 +48,12 @@ export default function Navbar ({ isAuth, profile } = {}) {
 
   return (
     <AppBar position='static' sx={{ boxShadow: 3, display: 'flex', m: 0, p: 0 }}>
-      <Container maxWidth='xl' sx={{ display: 'flex', justifyContent: 'space-between', m: 0, p: 0  }}>
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', m: 0, p: '0 24px'  }}>
         <Toolbar disableGutters sx={{ display: 'flex', m: 0, p: 0}}>
           <Typography
-            variant="h6"
+            variant='h6'
             noWrap
-            component="div"
+            component='div'
             sx={{ mr: 2, display: { xs: 'none', md: 'flex', xl: 'flex' } }}
           >
             Links Admin
@@ -49,7 +64,7 @@ export default function Navbar ({ isAuth, profile } = {}) {
         <Box>
         { renderTopRight() }
         </Box>
-      </Container>
+      </Box>
     </AppBar>
   )
 

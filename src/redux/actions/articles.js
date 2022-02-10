@@ -15,14 +15,15 @@ export const load_articles = () => ( dispatch ) => {
 }
 
 export const publish_article = ( values ) => ( dispatch ) => {
-  console.log( values )
+  console.log({ values })
   const data = new FormData()
   data.append( 'title', values.title )
   data.append( 'description', values.description )
+  data.append( 'published', values.published )
   data.append( 'tags', values.tags )
   data.append( 'text', values.text )
   data.append( 'files', values.files )
-  axios.post( `${ API_URL }blog/articles`,  data, { headers: {
+  axios.post( `${ API_URL }blog/articles`, data, { headers: {
     'x-access-token': values.token
   }} )
   .then(( res ) => {
@@ -32,6 +33,35 @@ export const publish_article = ( values ) => ( dispatch ) => {
   .catch(( err ) => {
     const { data, status } = err.response
     dispatch({ type: ARTICLES.PUBLISH.FAILURE, status, ...data })
+  })
+}
+
+export const save_article = ( values ) => ( dispatch ) => {
+  console.log(values)
+  const { description, files, published, tags, text, title } = values,
+  data = new FormData()
+  if ( files ) {
+    data.append( 'title', title )
+    data.append( 'description', description )
+    data.append( 'published', published )
+    data.append( 'tags', tags )
+    data.append( 'text', text )
+    data.append( 'files', files )
+  }
+
+  const body = files ? data : { description, published, files, tags, text, title }
+
+  console.log( 'body => ', body )
+  axios.patch( `${ API_URL }blog/articles/${ values.id }`, body, { headers: {
+    'x-access-token': values.token
+  }} )
+  .then(( res ) => {
+    const { data, status } = res
+    dispatch({ type: ARTICLES.SAVE.SUCCESS, status, ...data })
+  })
+  .catch(( err ) => {
+    const { data, status } = err.response
+    dispatch({ type: ARTICLES.SAVE.FAILURE, status, ...data })
   })
 }
 

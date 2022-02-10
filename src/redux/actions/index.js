@@ -60,11 +60,10 @@ export const clap = ( article_id ) => ( dispatch ) => {
 
 export const login = ( data ) => ( dispatch ) => {
   axios.post( `${ API_URL }admin/auth/login`, data)
-  .then(( res ) =>{
-    const response = res.data
+  .then(({ data, status }) =>{
     // TODO: SQLite for react-native
-    localStorage.setItem('Auth', JSON.stringify( response ))
-    dispatch({ type: AUTH.SET.USER.SUCCESS, ...response })
+    localStorage.setItem('Auth', JSON.stringify( data ))
+    dispatch({ type: AUTH.SET.USER.SUCCESS, ...data, status })
   })
   .catch(({ response }) => {
     const { data, status } = response

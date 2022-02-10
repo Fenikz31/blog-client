@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { DataGrid, GridToolbar } from '@mui/x-data-grid';
-import { formatDistanceToNow, parseISO } from 'date-fns';
+import { format, formatDistanceToNow, parseISO } from 'date-fns';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { MyDeleteOutline } from '../styles/styles';
@@ -9,6 +9,7 @@ import { get_users } from '../redux/actions/users';
 import Modal from '../components/modal';
 import User from './user';
 import { Box } from '@mui/material';
+import { fr } from 'date-fns/locale';
 
 export default function Users () {
   const dispatch = useDispatch(),
@@ -30,29 +31,18 @@ export default function Users () {
             field,
             headerName:  `${ field.charAt( 0 ).toUpperCase() }${ field.slice( 1 ) }`,
             valueGetter: ( params ) => {
-              if ( field === 'created' )
-                return formatDistanceToNow( parseISO( params.row[ field ]))
+              if ( field === 'created' ) {
+                return format( parseISO( params.row[ field ]), 'P', fr)
+              }
 
               if ( field === 'updated' )
-                return formatDistanceToNow( parseISO( params.row[ field ]))
+                return format( parseISO( params.row[ field ]), 'P', fr)
               
               return params.row[ field ]
             },
-            width: 140
+            minWidth: 100,
+            flex: 1 / fields.length
           }))
-
-    columns.push({
-        field: 'action',
-        headerName: 'Action',
-        width: 30,
-        renderCell: ( params ) => {
-          return (
-            <MyDeleteOutline
-              onClick={() => handleDelete( params.row.id )}
-            />
-          );
-        },
-      })
 
     setColumns( columns )
   }

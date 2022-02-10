@@ -11,13 +11,25 @@ const Alert = forwardRef(
 
 export default function Snackbars({ code, message, reason, status } = {}) {
   const [ open, setOpen ] = useState( false ),
-        { action } = useSelector(( state ) => state);
+        { action } = useSelector(( state ) => state),
+        [ feedback, setFeedback ] = useState({
+          code,
+          message,
+          reason,
+          status
+        });
 
   const handleClose = ( event, reason ) => {
     if ( reason === 'clickaway' )
     return;
 
     setOpen( false );
+    setFeedback({
+      code: '',
+      message: '',
+      reason: '',
+      status: ''
+    })
   };
 
   const handleSeverity = ( status ) => {
@@ -35,17 +47,30 @@ export default function Snackbars({ code, message, reason, status } = {}) {
   };
 
   function renderAlert () {
-    return ( <Alert severity={ handleSeverity( status )} >{ `${ code ? `${ code } - ` : '' }${ message }${ reason ? ` - ${ reason }` : '' }` }</Alert> )
+    if ( open && feedback.message )
+      return ( <Alert severity={ handleSeverity( feedback.status )} >{ `${ feedback.code ? `${ feedback.code } - ` : '' }${ feedback.message }${ feedback.reason ? ` - ${ feedback.reason }` : '' }` }</Alert> )
+
+    return null;    
   }
 
   useEffect(() => {
     switch ( action ) {
+      case ARTICLES.LOAD.FAILURE:
+      case ARTICLES.LOAD.SUCCESS:
       case ARTICLES.PUBLISH.FAILURE:
       case ARTICLES.PUBLISH.SUCCESS:
+      case ARTICLES.SAVE.FAILURE:
+      case ARTICLES.SAVE.SUCCESS:
       case AUTH.SET.USER.FAILURE:
       case AUTH.SET.USER.SUCCESS:
       case USERS.GET.ALL.FAILURE:
       case USERS.GET.ALL.SUCCESS:
+        setFeedback({
+          code,
+          message,
+          reason,
+          status
+        })
         return setOpen( true )
 
       default:

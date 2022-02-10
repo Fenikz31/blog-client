@@ -14,6 +14,7 @@ const theme = createTheme({
     mode: 'light'
   }
 })
+
 ReactDOM.render(
   <Provider store={ store }>
     <ThemeProvider theme={ theme } >

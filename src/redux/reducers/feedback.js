@@ -14,6 +14,7 @@ export default ( state = defaultState, { code, message, reason, status, type }) 
     case ARTICLES.COMMENT.FAILURE:
     case ARTICLES.LOAD.FAILURE:
     case ARTICLES.PUBLISH.FAILURE:
+    case ARTICLES.SAVE.FAILURE:
     case ARTICLES.UNCLAP.FAILURE:
     case ARTICLES.VIEW.FAILURE:
     case AUTH.FOLLOW.FAILURE:
@@ -28,6 +29,7 @@ export default ( state = defaultState, { code, message, reason, status, type }) 
     case ARTICLES.COMMENT.SUCCESS:
     case ARTICLES.LOAD.SUCCESS:
     case ARTICLES.PUBLISH.SUCCESS:
+    case ARTICLES.SAVE.SUCCESS:
     case ARTICLES.UNCLAP.SUCCESS:
     case ARTICLES.VIEW.SUCCESS:
     case AUTH.SET.USER.SUCCESS:

@@ -61,8 +61,7 @@ module.exports = () => {
     output,
 
     plugins: [
-      new DefinePlugin( envKeys ),
-      new HotModuleReplacementPlugin()
+      new DefinePlugin( envKeys )
     ],
     resolve
   }
