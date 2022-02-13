@@ -15,7 +15,6 @@ export const load_articles = () => ( dispatch ) => {
 }
 
 export const publish_article = ( values ) => ( dispatch ) => {
-  console.log({ values })
   const data = new FormData()
   data.append( 'title', values.title )
   data.append( 'description', values.description )
@@ -51,7 +50,6 @@ export const save_article = ( values ) => ( dispatch ) => {
 
   const body = files ? data : { description, published, files, tags, text, title }
 
-  console.log( 'body => ', body )
   axios.patch( `${ API_URL }blog/articles/${ values.id }`, body, { headers: {
     'x-access-token': values.token
   }} )
