@@ -1,6 +1,6 @@
 import 'react-hot-loader';
 import React from 'react';
-import { createTheme, ScopedCssBaseline, ThemeProvider } from '@mui/material';
+import { createTheme, CssBaseline, ThemeProvider } from '@mui/material';
 import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
 import { BrowserRouter as Router } from 'react-router-dom';
@@ -11,18 +11,25 @@ import { login } from './redux/actions/index.js';
 
 const theme = createTheme({
   palette: {
-    mode: 'light'
+    mode: 'dark',
+    primary: {
+      main: '#3D5AFE',
+    },
+    secondary: {
+      main: '#f13736',
+    },
+    background: {
+      default: '#565454',
+    },
   }
 })
 
 ReactDOM.render(
   <Provider store={ store }>
     <ThemeProvider theme={ theme } >
-      <ScopedCssBaseline style={{ height: '100%', width: '100%', margin: 0, padding: 0 }}>
-        <Router>
-          <App />
-        </Router>
-      </ScopedCssBaseline>
+      <CssBaseline
+        children={ <Router children={ <App /> } /> }
+        style={{ height: '100%', width: '100%', margin: 0, padding: 0 }}/>
     </ThemeProvider>
   </Provider>
   ,
@@ -30,7 +37,7 @@ ReactDOM.render(
 );
 
 const environment = `${process.env.ENV}`
-/* */ 
+/* */
 if ( environment === 'development' )
   store.dispatch( login({ password: `${ process.env.PASSWORD }`, username: `${ process.env.USERNAME }` }))
 /* **/

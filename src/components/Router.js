@@ -5,6 +5,7 @@ import { Navigate, Route, Routes, useLocation } from 'react-router-dom';
 import Blog from '../pages/blog';
 import Dashboard from '../pages/dashboard';
 import Login from '../pages/login';
+import SignUp from '../pages/signup';
 import Users from '../pages/users';
 
 function ProtectedRoutes ({ auth, children } = {}) {
@@ -36,6 +37,7 @@ export default function Router ({ children, tabs, ...rest } = {}) {
           <Users key={ 2 } />
         </ProtectedRoutes>
       } />
+      <Route path='/signup' element={ <SignUp /> } />
       <Route path='/login' element={ <Login /> } />
     </Routes>
   )

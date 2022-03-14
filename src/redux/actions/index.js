@@ -2,7 +2,7 @@ import axios from 'axios';
 import { ARTICLES, AUTH, TOGGLE } from '../constants';
 
 const { API_URL } = process.env;
-export const load_articles = () => (dispatch) => {
+export const load_articles = () => ( dispatch ) => {
   axios.get( `${ API_URL }/articles` )
   .then(( res ) => {
     const articles = res.data

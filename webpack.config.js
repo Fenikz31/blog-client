@@ -16,7 +16,7 @@ module.exports = () => {
         },
         env = dotenv.config().parsed, // call dotenv and it will return an Object with a parsed key
         envKeys = Object.keys( env ).reduce(( prev, next ) => {
-          prev[ `process.env.${ next }` ] = JSON.stringify( env[ next]  );
+          prev[ `process.env.${ next }` ] = JSON.stringify( env[ next]);
           return prev;
         }, {}), // reduce it to a nice object, the same as before
         resolve = {
