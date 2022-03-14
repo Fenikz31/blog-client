@@ -63,6 +63,8 @@ export default function Snackbars({ code, message, reason, status } = {}) {
       case ARTICLES.SAVE.SUCCESS:
       case AUTH.SET.USER.FAILURE:
       case AUTH.SET.USER.SUCCESS:
+      case AUTH.SIGNUP.FAILURE:
+      case AUTH.SIGNUP.SUCCESS:
       case USERS.GET.ALL.FAILURE:
       case USERS.GET.ALL.SUCCESS:
         setFeedback({

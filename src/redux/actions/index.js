@@ -71,5 +71,23 @@ export const login = ( data ) => ( dispatch ) => {
   })
 }
 
+export const signup = ( data ) => ( dispatch ) => {
+  const { firstname, lastname, username, email, password } = data
+  axios.post( `${ API_URL }admin/auth/signup`, {
+    firstname,
+    lastname,
+    username,
+    email,
+    password
+  })
+  .then(({ data, status }) =>{
+    dispatch({ type: AUTH.SIGNUP.SUCCESS, ...data, status })
+  })
+  .catch(({ response }) => {
+    const { data, status } = response
+    dispatch({ type: AUTH.SIGNUP.FAILURE, status, ...data })
+  })
+}
+
 export const toggleClose = () => ( dispatch ) => dispatch({ type: TOGGLE.MODAL.SUCCESS, modalMode: false })
 export const toggleOpen = () => ( dispatch ) => dispatch({ type: TOGGLE.MODAL.SUCCESS, modalMode: true })

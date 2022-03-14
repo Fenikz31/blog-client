@@ -52,6 +52,11 @@ export const AUTH = {
       SUCCESS: 'AUTH.SET.USER.SUCCESS'
     }
   },
+  
+  SIGNUP: {
+    FAILURE: 'AUTH.SIGNUP.FAILURE',
+    SUCCESS: 'AUTH.SIGNUP.SUCCESS'
+  },
 
   VIEW: {
     FAILURE: 'AUTH.VIEW.FAILURE',
