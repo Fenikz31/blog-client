@@ -8,12 +8,18 @@ import PersonAdd from '@mui/icons-material/PersonAdd';
 import Settings from '@mui/icons-material/Settings';
 import Logout from '@mui/icons-material/Logout';
 
+
+import { useDispatch } from 'react-redux';
+import { logout } from '../redux/actions';
+import { Button } from '@mui/material';
+
 export default function AccountMenu({
   anchorEl = null,
   avatar,
   onClose = () => null,
   open
 }) {
+  const dispatch = useDispatch()
   return (
     <>
       <Menu
@@ -25,9 +31,10 @@ export default function AccountMenu({
         PaperProps={{
           elevation: 0,
           sx: {
+            bgcolor: 'background.main',
             overflow: 'visible',
             filter: 'drop-shadow(0px 2px 8px rgba(0,0,0,0.32))',
-            mt: -0.5,
+            // mt: -0.5,
             '& .MuiAvatar-root': {
               width: 32,
               height: 32,
@@ -39,10 +46,10 @@ export default function AccountMenu({
               display: 'block',
               position: 'absolute',
               top: 0,
-              right: 30,
+              right: 24,
               width: 10,
               height: 10,
-              bgcolor: 'background.paper',
+              bgcolor: 'background.main',
               transform: 'translateY(-50%) rotate(45deg)',
               zIndex: 0,
             },
@@ -51,13 +58,13 @@ export default function AccountMenu({
         transformOrigin={{ horizontal: 'center', vertical: 'top' }}
         anchorOrigin={{ horizontal: 'center', vertical: 'bottom' }}
       >
-        <MenuItem>
+        {/* <MenuItem>
           <Avatar src={ `${ avatar }` } /> Profile
         </MenuItem>
         <MenuItem disabled >
           <Avatar src={ `${ avatar }` }/> My account
         </MenuItem>
-        <Divider />
+        <Divider /> 
         <MenuItem>
           <ListItemIcon>
             <PersonAdd fontSize='small' />
@@ -69,8 +76,8 @@ export default function AccountMenu({
             <Settings fontSize='small' />
           </ListItemIcon>
           Settings
-        </MenuItem>
-        <MenuItem disabled>
+        </MenuItem>*/}
+        <MenuItem onClick={( e ) => dispatch( logout())} >
           <ListItemIcon>
             <Logout fontSize='small' />
           </ListItemIcon>

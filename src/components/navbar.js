@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Language, NotificationsNone, Settings } from '@material-ui/icons';
 import styled from 'styled-components';
-import { AppBar, Badge, Box, Container, IconButton, Stack, Toolbar, Tooltip, Typography } from '@mui/material';
+import { AppBar, Avatar, Badge, Box, Container, IconButton, Stack, Toolbar, Tooltip, Typography } from '@mui/material';
 import AccountMenu from './menu';
 
 export default function Navbar ({ isAuth, profile } = {}) {
@@ -21,20 +21,20 @@ export default function Navbar ({ isAuth, profile } = {}) {
     if ( isAuth )
       return (
         <>
-          <Stack direction='row' spacing={ 2 } sx={{ alignItems: 'center' }}>
-            <Badge badgeContent={ notifications.length } color='error'>
+          <Stack direction='row' spacing={ 2 } sx={{ alignItems: 'center', height: '100%' }}>
+           {/*  <Badge badgeContent={ notifications.length } color='error'>
               <NotificationsNone style={{ color: 'white', display: 'block', padding: 2 }}/>
             </Badge>
             <Badge badgeContent={ notifications.length } color='error'>
               <Language style={{ color: 'white', display: 'block' }}/>
             </Badge>
-            <Tooltip sx={{ color: 'white', display: 'block' }} title='Open settings'>
+            <Tooltip title='Open settings'>
               <IconButton >
                 <Settings />
               </IconButton>
-            </Tooltip>
-            <IconButton onClick={ handleClick } sx={{ color: 'white', display: 'block' }}>
-              <Avatar src={`${ avatar }`} alt='avatar' />
+            </Tooltip> */}
+            <IconButton onClick={ handleClick } >
+              <Avatar alt='avatar' src={`${ avatar }`} sx={{ color: 'white', height: 24, width: 24 }} />
             </IconButton>
           </Stack>
           <AccountMenu anchorEl={ anchorEl } open={ open } onClose={ handleClose } />
@@ -86,30 +86,6 @@ export default function Navbar ({ isAuth, profile } = {}) {
 //     top: 0;
 //     z-index: 999;
 // `
-const Wrapper = styled.div`
-    height: 100%;
-    padding: 0px 20px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-`
-const Logo = styled.span`
-    font-weight: bold;
-    font-size: 30px;
-    color: maroon;
-    cursor: pointer;
-`
-const TopLeft = styled.div``
-const TopRight = styled.div`
-    display: flex;
-    align-items: center;
-`
-const IconContainer = styled.div`
-    position: relative;
-    cursor: pointer;
-    margin-right: 10px;
-    color: #555;
-`
 const IconBadge = styled.span`
     width: 15px;
     height: 15px;
@@ -124,9 +100,9 @@ const IconBadge = styled.span`
     justify-content: center;
     font-size: 10px;
 `
-const Avatar = styled.img`
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    cursor: pointer;
-`
+// const Avatar = styled.img`
+//     width: 40px;
+//     height: 40px;
+//     border-radius: 50%;
+//     cursor: pointer;
+// `

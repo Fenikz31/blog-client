@@ -87,6 +87,6 @@ export default function Login () {
       </Paper>
     )
 
-  return <Navigate to='/' replace={ true } />
+  return <Navigate to='/blog' replace={ true } />
 
 }

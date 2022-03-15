@@ -61,6 +61,8 @@ export default function Snackbars({ code, message, reason, status } = {}) {
       case ARTICLES.PUBLISH.SUCCESS:
       case ARTICLES.SAVE.FAILURE:
       case ARTICLES.SAVE.SUCCESS:
+      case AUTH.LOGOUT.FAILURE:
+      case AUTH.LOGOUT.SUCCESS:
       case AUTH.SET.USER.FAILURE:
       case AUTH.SET.USER.SUCCESS:
       case AUTH.SIGNUP.FAILURE:

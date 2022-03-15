@@ -90,11 +90,11 @@ export default function SideBar ({ children, isAuth } = {}) {
       selectionFollowsFocus          
       sx={{ borderRight: 1, borderColor: 'divider', height: '100%' }}
     >
-      <Tab
+      {/* <Tab
         label='Dashboard'
         component={ Link }
         to='/'
-        />
+        /> */}
       <Tab
         label='Blog'
         component={ Link }

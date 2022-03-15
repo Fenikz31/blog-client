@@ -2,7 +2,7 @@ import React, { memo, useEffect, useRef, useState } from 'react';
 import { Box, Button, Checkbox, Chip, FormControlLabel, Paper, Popper, Stack, TextField, Typography } from '@mui/material';
 import { DataGrid, GridToolbar } from '@mui/x-data-grid';
 import { format, parseISO } from 'date-fns';
-import { fr } from 'date-fns/locale'
+import { fr } from 'date-fns/locale';
 import { useDispatch, useSelector } from 'react-redux';
 
 import EditorComponent from '../components/editor';
@@ -22,7 +22,64 @@ export default function Blog () {
         { action, articles, auth } = useSelector(( state )=> state ),
         { article, rows } = articles,
         { token } = auth.profile,
-        [ columns, setColumns ] = useState([]),
+        [ columns, setColumns ] = useState([
+          {
+              field: 'created',
+              headerName: 'Created',
+              type: 'date',
+              flex: 1 / 8,
+              sortable: true,
+              renderCell: renderCellExpand
+          },
+          {
+              field: 'updated',
+              headerName: 'Updated',
+              type: 'date',
+              flex: 1 / 8,
+              sortable: true,
+              renderCell: renderCellExpand
+          },
+          {
+              field: 'title',
+              headerName: 'Title',
+              type: 'string',
+              flex: 1 / 8,
+              sortable: true,
+              renderCell: renderCellExpand
+          },
+          {
+              field: 'description',
+              headerName: 'Description',
+              type: 'string',
+              flex: 1 / 8,
+              sortable: true,
+              renderCell: renderCellExpand
+          },
+          {
+              field: 'published',
+              headerName: 'Published',
+              type: 'boolean',
+              flex: 1 / 8,
+              sortable: true,
+              renderCell: renderCellExpand
+          },
+          {
+              field: 'tags',
+              headerName: 'Tags',
+              type: 'string',
+              flex: 1 / 8,
+              sortable: false,
+              renderCell: renderCellExpand
+          },
+          {
+              field: 'author',
+              headerName: 'Author',
+              type: 'string',
+              flex: 1 / 8,
+              sortable: true,
+              renderCell: renderCellExpand
+          }
+      ]),
         parsed = rows.map(({ _id: id, createdAt: created, updatedAt: updated, ...rest }) => ({ id, created, updated, ...rest })),
         [ filter, setFilter ] = useState({ items: []}),
         [ loading, setLoading ] = useState( true ),
@@ -123,7 +180,7 @@ export default function Blog () {
               elevation={ 1 }
               style={{ minHeight: wrapper.current.offsetHeight - 3 }}
             >
-              <Typography variant="body2" style={{ padding: 8 }}>
+              <Typography variant='body2' style={{ padding: 8 }}>
                 { value }
               </Typography>
             </Paper>
@@ -150,20 +207,20 @@ export default function Blog () {
   }
 
   function handleColumns () {
-    const row =  data[ 0 ],
-          fields = Object.keys( row ).filter(( field ) => [ '__v', 'claps', 'comments', 'id', 'feature_img', 'text' ].indexOf( field ) === -1),
-          columns = fields.map(( field ) => ({
-            field,
-            headerName: `${ field.charAt( 0 ).toUpperCase() }${ field.slice( 1 ) }`,
-            renderCell: renderCellExpand,
-            type: handleType( field ),
-            minWidth: 100,
-            flex: 1 / fields.length,
-            maxWidth: [ 'created', 'updated', 'published' ].indexOf( field ) !== -1 ? 100 : 500,
-            sortable: [ 'tags' ].indexOf( field ) !== -1 ? false : true
-          }))
-    setColumns( columns )
-    setLoading( false )
+    if ( rows.length !== 0 ) {
+      const row =  data[ 0 ],
+            fields = Object.keys( row ).filter(( field ) => [ '__v', 'claps', 'comments', 'id', 'feature_img', 'text' ].indexOf( field ) === -1),
+            columns = fields.map(( field ) => ({
+              field,
+              headerName: `${ field.charAt( 0 ).toUpperCase() }${ field.slice( 1 ) }`,
+              renderCell: renderCellExpand,
+              type: handleType( field ),
+              flex: 1 / fields.length + 1,
+              sortable: [ 'tags' ].indexOf( field ) !== -1 ? false : true
+            }))
+      setColumns( columns )
+      setLoading( false )
+    }
   }
 
   function handleEditorChange ( value, editor ) {
@@ -232,7 +289,7 @@ export default function Blog () {
 
   // TODO: Sorting on Author & tags does not work
   function renderDataGrid () {
-    return <Box sx={{ bgcolor: 'background.paper', display: 'flex', height: '100%', p: 2, width: '100%' }}>
+    return <Box sx={{ /* bgcolor: 'background.default',  */display: 'flex', height: '100%', p: 2, width: '100%' }}>
       <DataGrid
         columns={ columns }
         components={{ Toolbar: GridToolbar }}
@@ -247,6 +304,7 @@ export default function Blog () {
         pageSize={ pageSize }
         rows={ parsed }
         rowsPerPageOptions={[ 10, 25, 50, 100 ]}
+        sx={{ bgcolor: 'background.main' }}
       />
     </Box>;
   }
@@ -358,7 +416,7 @@ export default function Blog () {
   }, [ rows ])
 
   useEffect(() => {
-    if ( data[ 0 ]?.id && data.length !== 0 && columns.length === 0 ) {
+    if ( data[ 0 ]?.id && data.length !== 0 ) {
       handleColumns()
     }
   }, [ data ])
@@ -389,14 +447,14 @@ export default function Blog () {
       (
         <>
           <Box sx={{
-            bgcolor: 'background.paper',
-            boxShadow: '10px 5px 5px grey',
+            // bgcolor: 'background.default',
             display: 'flex',
             height: 65,
             justifyContent: !editor ? 'flex-start' : 'flex-end',
             p: 2,
             width: '100%'
-            }}>
+          }}
+          >
             { renderCreateButton() }
             <Stack direction='row' spacing={ 1 }>
               { renderSaveButton() }

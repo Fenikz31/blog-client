@@ -41,6 +41,11 @@ export const AUTH = {
     SUCCESS: 'AUTH.FOLLOW.SUCCESS'
   },
 
+  LOGOUT: {
+    FAILURE: 'AUTH.LOGOUT.FAILURE',
+    SUCCESS: 'AUTH.LOGOUT.SUCCESS'
+  },
+
   SET: {
     PROFILE: {
       FAILURE: 'AUTH.SET.PROFILE.FAILURE',
@@ -52,7 +57,7 @@ export const AUTH = {
       SUCCESS: 'AUTH.SET.USER.SUCCESS'
     }
   },
-  
+
   SIGNUP: {
     FAILURE: 'AUTH.SIGNUP.FAILURE',
     SUCCESS: 'AUTH.SIGNUP.SUCCESS'

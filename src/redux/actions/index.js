@@ -2,6 +2,28 @@ import axios from 'axios';
 import { ARTICLES, AUTH, TOGGLE } from '../constants';
 
 const { API_URL } = process.env;
+
+/**
+ * req.body.article_id
+ * */
+export const clap = ( article_id ) => ( dispatch ) => {
+  axios.post( `${ API_URL }/articles/clap/${ article_id }` )
+  .then(( res ) => dispatch({ type: ARTICLES.CLAP.SUCCESS }))
+  .catch(( err ) => dispatch({ type: ARTICLES.CLAP.FAILURE, reason: err }))
+}
+
+/**
+ * article_id, author_id, comment
+ * */ 
+export const comment = ( article_id, author_id, comment ) => ( dispatch ) => {
+  axios.post( `${ API_URL }/articles/${ article_id }?autho_id=${ author_id }`, { comment } )
+  .then(( res ) => {
+    const article = res.data
+    dispatch({ type: ARTICLES.COMMENT.SUCCESS, article })
+  })
+  .catch(( err ) => dispatch({ type: ARTICLES.COMMENT.FAILURE, reason: err }))
+}
+
 export const load_articles = () => ( dispatch ) => {
   axios.get( `${ API_URL }/articles` )
   .then(( res ) => {
@@ -35,22 +57,6 @@ export const getArticle = ( article_id ) => ( dispatch ) => {
   .catch(( err ) => dispatch({ type: ARTICLES.VIEW.FAILURE, reason: err }))
 }
 
-// article_id, author_id, comment
-export const comment = ( article_id, author_id, comment ) => ( dispatch ) => {
-  axios.post( `${ API_URL }/articles/${ article_id }?autho_id=${ author_id }`, { comment } )
-  .then(( res ) => {
-    const article = res.data
-    dispatch({ type: ARTICLES.COMMENT.SUCCESS, article })
-  })
-  .catch(( err ) => dispatch({ type: ARTICLES.COMMENT.FAILURE, reason: err }))
-}
-//req.body.article_id
-export const clap = ( article_id ) => ( dispatch ) => {
-  axios.post( `${ API_URL }/articles/clap/${ article_id }` )
-  .then(( res ) => dispatch({ type: ARTICLES.CLAP.SUCCESS }))
-  .catch(( err ) => dispatch({ type: ARTICLES.CLAP.FAILURE, reason: err }))
-}
-
 //id, user_id
 // export const follow = (id, user_id) =>  (dispatch) => {
 //   axios.post( `${ API_URL }/user/follow` ,{ id, user_id })
@@ -69,6 +75,18 @@ export const login = ( data ) => ( dispatch ) => {
     const { data, status } = response
     dispatch({ type: AUTH.SET.USER.FAILURE, status, ...data })
   })
+}
+export const logout = () => ( dispatch ) => {
+  axios.get( `${ API_URL }admin/auth/logout` )
+  .then(({ data, status }) => {
+      localStorage.removeItem('Auth' )
+      dispatch({ type: AUTH.LOGOUT.SUCCESS, ...data, status })
+    })
+  .catch(({ response }) => {      
+    const { data, status } = response
+    console.error( 'error => ', response )
+    dispatch({ type: AUTH.LOGOUT.FAILURE,  status, ...data })
+  })  
 }
 
 export const signup = ( data ) => ( dispatch ) => {
