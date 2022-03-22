@@ -36,7 +36,6 @@ export const publish_article = ( values ) => ( dispatch ) => {
 }
 
 export const save_article = ( values ) => ( dispatch ) => {
-  console.log(values)
   const { description, files, published, tags, text, title } = values,
   data = new FormData()
   if ( files ) {
