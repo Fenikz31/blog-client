@@ -10,11 +10,13 @@ import Modal from '../components/modal';
 import User from './user';
 import { Box } from '@mui/material';
 import { fr } from 'date-fns/locale';
+import GridComponent from '../components/grid';
+
+import { default as grid } from '../../config/grid';
 
 export default function Users () {
   const dispatch = useDispatch(),
         { loading, rows } = useSelector(({ users })=> users ),
-        [ columns, setColumns ] = useState([]),
         parsed = rows.map(({ _id: id, createdAt: created, updatedAt: updated, ...rest }) => ({ id, created, updated, ...rest })),
         [ data, setData ] = useState( parsed ),
         [ modal, setModal ] = useState({
@@ -22,31 +24,9 @@ export default function Users () {
           title: null,
           type: null
         }),
-        handleDelete = ( id ) => setData( data.filter(( item ) => item._id !== id ))
-        
-  function handleColumns () {
-    const row =  data[ 0 ],
-          fields = Object.keys( row ).filter(( field ) => [ '__v', 'articles', 'avatar', 'chatList', 'city', 'country', 'followers', 'following', 'images', 'notifications', 'password', 'posts' ].indexOf( field ) === -1),
-          columns = fields.map(( field ) => ({
-            field,
-            headerName:  `${ field.charAt( 0 ).toUpperCase() }${ field.slice( 1 ) }`,
-            valueGetter: ( params ) => {
-              if ( field === 'created' ) {
-                return format( parseISO( params.row[ field ]), 'P', fr)
-              }
+        { columns } = grid.users
 
-              if ( field === 'updated' )
-                return format( parseISO( params.row[ field ]), 'P', fr)
-              
-              return params.row[ field ]
-            },
-            minWidth: 100,
-            flex: 1 / fields.length
-          }))
-
-    setColumns( columns )
-  }
-  function handleClose () {
+  /* function handleClose () {
     setModal({
       selected: null,
       title: null,
@@ -97,7 +77,7 @@ export default function Users () {
         </Modal>
       )
     }
-  }
+  } */
 
   useEffect(() => {
     dispatch( get_users())
@@ -109,31 +89,13 @@ export default function Users () {
     }
   }, [ rows ])
 
-  useEffect(() => {
-    if ( data[ 0 ]?.id && data.length !== 0 && columns.length === 0 ) {
-      handleColumns()
-    }
-  }, [ data ])
-
-
+  useEffect(() => {}, [ data ])
   return (
-    <>
-    {
-      loading || columns.length === 0 ? 'Loading ...' :
-      <Box sx={{ bgcolor: 'background.paper', display: 'flex', height: '100%', p: 2, width: '100%' }}>
-          <DataGrid
-            rows={ data }
-            onRowClick={ handleRowClick }
-            rowsPerPageOptions={[ 10, 25, 50, 100 ]}
-            disableSelectionOnClick
-            columns={ columns }
-            pageSize={ 10 }
-            checkboxSelection
-            components={{ Toolbar: GridToolbar }} 
-          />
-        { renderModal() }
-      </Box>
-    }
-    </>
+    <Box sx={{ display: 'flex', height: '100%', p: 2, width: '100%' }}>
+      <GridComponent
+        columns={ columns }
+        data={ data }
+      />
+    </Box>
   )
 }

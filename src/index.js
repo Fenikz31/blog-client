@@ -1,4 +1,4 @@
-import 'react-hot-loader';
+// import 'react-hot-loader';
 import React from 'react';
 import { createTheme, CssBaseline, ThemeProvider } from '@mui/material';
 import ReactDOM from 'react-dom';
@@ -37,7 +37,7 @@ ReactDOM.render(
   document.getElementById('root')
 );
 
-const environment = `${process.env.ENV}`
+const environment = `${ process.env.NODE_ENV }`
 /* */
 if ( environment === 'development' )
   store.dispatch( login({ password: `${ process.env.PASSWORD }`, username: `${ process.env.USERNAME }` }))

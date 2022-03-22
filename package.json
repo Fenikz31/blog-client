@@ -5,10 +5,16 @@
   "main": "webpack.config.js",
   "scripts": {
     "dev": "webpack serve --config ./webpack.config.js",
+    "local": " webpack serve --node-env local",
+    "prod": "webpack --node-env production  --config ./webpack.prod.config.js ",
+    "start:test": "webpack --node-env test",
+    "webpack:dev": " webpack serve --node-env development --config ./webpack.config.js",
+    "webpack:help": "webpack --help",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
-  "author": "",
+  "author": "Fenikz",
+  "proxy": "http://localhost:5000",
   "license": "ISC",
   "dependencies": {
     "@emotion/react": "^11.7.1",
@@ -37,7 +43,8 @@
     "style-loader": "^3.3.1",
     "styled-components": "^5.3.3",
     "terser-webpack-plugin": "^5.3.1",
-    "tinymce": "^5.10.2"
+    "tinymce": "^5.10.2",
+    "uglify-js": "^3.15.3"
   },
   "devDependencies": {
     "@babel/core": "^7.16.7",
