@@ -9,6 +9,7 @@ export default function GridComponent ({
   },
   columns = [],
   data = [],
+  sx = {},
   ...props
 } = {}) {
   const [ filter, setFilter ] = useState({ items: []}),
@@ -36,6 +37,7 @@ export default function GridComponent ({
         rows={ data }
         rowsPerPageOptions={[ 10, 25, 50, 100 ]}
         sx={{
+          ...sx,
           bgcolor: 'background.main',
           '& .MuiDataGrid-booleanCell[data-value="false"]': {
             color: 'red'
