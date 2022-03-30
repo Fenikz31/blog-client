@@ -18,7 +18,7 @@ module.exports = () => {
           filename: 'bundle.js',
           path: home
         },
-        env = dotenv.config().parsed, // call dotenv and it will return an Object with a parsed key
+        env = dotenv.config({ path: '.env.prod' }).parsed, // call dotenv and it will return an Object with a parsed key
         envKeys = Object.keys( env ).reduce(( prev, next ) => {
           prev[ `process.env.${ next }` ] = JSON.stringify( env[ next]);
           return prev;

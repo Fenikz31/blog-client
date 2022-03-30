@@ -1,17 +1,22 @@
 FROM node:alpine
  
-WORKDIR /usr/src/service
+WORKDIR /usr/app/admin
 
 # add `/app/node_modules/.bin` to $PATH
-ENV PATH /usr/src/service/node_modules/.bin:$PATH
+ENV PATH /usr/app/admin/node_modules/.bin:$PATH
  
-COPY package.json ./
-COPY package-lock.json ./
+COPY package*.json .
+
+COPY assets dist
  
-RUN npm install
+RUN npm install --silent
+
+RUN npm install pm2 -g
  
-COPY . ./
+COPY . .
  
-EXPOSE 5001
+EXPOSE 8887
  
-CMD [ "yarn", "dev" ]
+RUN yarn build
+
+CMD [ "yarn", "serve:prod" ]
