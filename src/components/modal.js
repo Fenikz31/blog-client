@@ -5,7 +5,8 @@ import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
 import Slide from '@mui/material/Slide';
-import { Delete, Edit, Save } from '@material-ui/icons';
+import { Close, Delete, Edit, Save } from '@material-ui/icons';
+import { Box, IconButton } from '@mui/material';
 
 const Transition = forwardRef(function Transition( props, ref ) {
   return <Slide direction='up' ref={ ref } { ...props } />;
@@ -29,11 +30,23 @@ export default function Modal({
 } = {}) {
   const [ open, setOpen ] = useState( true )
 
-  function handleClose () {
+  function handleCancel () {
     setOpen( false )
-    if ( 'close' in actions ) {
-      if ( typeof actions.close === 'function' ) {
-        actions.close()
+    if ( 'cancel' in actions ) {
+      if ( typeof actions.cancel === 'function' ) {
+        actions.cancel()
+      }
+    }
+  }
+
+  function handleClose ( event, reason ) {
+    console.log( type )
+    if ( reason !== 'backdropClick' ) {
+      setOpen( false )
+      if ( 'close' in actions ) {
+        if ( typeof actions.close === 'function' ) {
+          actions.close()
+        }
       }
     }
   }
@@ -77,16 +90,41 @@ export default function Modal({
 
     // if ( validated ) {
       if ( typeof action === 'function' ) {
-        if ( type !== 'search' ) {
+        if ( type !== 'search' && type !== 'warning' ) {
           dispatch( action( content ))
         }
         else {
-          action( content )
+          action( e )
         }
       }
       handleClose()
     // }
-  }  
+  }
+
+  function handleWarning () {    
+    setOpen( false )
+    if ( 'warning' in actions ) {
+      if ( typeof actions.warning === 'function' ) {
+        actions.warning()
+      }
+    }
+  }
+
+  function renderButtonCancel () {
+    if ( type === 'warning' ) {
+      return (
+        <Button onClick={ handleCancel } color='error' variant='contained' title='CANCEL'>CANCEL</Button>
+      )
+    }
+  }
+
+  function renderButtonClose () {
+    return (
+      <IconButton aria-label='close' onClick={ handleCancel } variant='contained'>
+        <Close />
+      </IconButton>
+    )
+  }
 
   function renderButtonCreate () {
     if ( type === 'create'  ) {
@@ -129,10 +167,19 @@ export default function Modal({
     }
   }
 
+  function renderButtonValidate () {
+    if ( type === 'warning' ) {
+      return (
+        <Button color='primary' onClick={ handleWarning } variant='contained' title='OK'>OK</Button>
+      )
+    }
+  }
+
   return (
     <div>
       <Dialog
         aria-describedby='alert-dialog-slide-description'
+        disableEscapeKeyDown={ type === 'warning' }        
         keepMounted
         maxWidth={ rest.maxWidth || 'md' }
         onClose={ handleClose }
@@ -141,16 +188,23 @@ export default function Modal({
         TransitionComponent={ Transition }
         { ...rest }
       >
-        <DialogTitle>{ title }</DialogTitle>
+        <DialogTitle>
+          <Box sx={{ alignItems: 'center', display: 'flex', justifyContent: 'space-between' }}>
+            { title }
+            { renderButtonClose() }
+          </Box>
+        </DialogTitle>
         <DialogContent>
           <children.type data={ data } { ...children.props }/>
         </DialogContent>
-        <DialogActions>
+        <DialogActions sx={{ justifyContent: 'space-between' }}>
+          { renderButtonCancel() }
           { renderButtonCreate() }
           { renderButtonRemove() }
           { renderButtonReset() }
           { renderButtonSearch() }
           { renderButtonUpdate() }
+          { renderButtonValidate() }
         </DialogActions>
       </Dialog>
     </div>

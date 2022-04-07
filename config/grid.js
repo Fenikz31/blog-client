@@ -60,6 +60,10 @@ export default {
           sortable: true,
           valueGetter: ({ value }) => value.username
       }
+    ],
+    reloadOn: [
+      'ARTICLES.PUBLISH.SUCCESS',
+      'ARTICLES.SAVE.SUCCESS'
     ]
   },
 

@@ -15,7 +15,7 @@ RUN npm install pm2 -g
  
 COPY . .
  
-EXPOSE 8887
+EXPOSE 80
  
 RUN yarn build
 

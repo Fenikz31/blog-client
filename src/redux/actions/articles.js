@@ -63,7 +63,7 @@ export const save_article = ( values ) => ( dispatch ) => {
 }
 
 export const get_article = ( article_id ) => ( dispatch ) => {
-  axios.get( `${ API_URL }blog/articles/${ article_id }` )
+  axios.get( `${ API_URL }blog/articles/all/${ article_id }` )
   .then(( res ) => {
     const { data, status } = res
     dispatch({ type: ARTICLES.VIEW.SUCCESS, status, ...data })
@@ -76,7 +76,7 @@ export const get_article = ( article_id ) => ( dispatch ) => {
 
 // article_id, author_id, comment
 export const comment = ( article_id, author_id, comment ) => ( dispatch ) => {
-  axios.post( `${ API_URL }blog/articles/${ article_id }?autho_id=${ author_id }`, { comment } )
+  axios.post( `${ API_URL }blog/articles/${ article_id }?author_id=${ author_id }`, { comment } )
   .then(( res ) => {
     const article = res.data
     dispatch({ type: ARTICLES.COMMENT.SUCCESS, article })

@@ -11,13 +11,14 @@ export default ( state = initialState, { result, type } ) => {
       case ARTICLES.LOAD.SUCCESS :
         return {
           ...state,
-          rows: result
+          rows: result,
+          article: {}
         }
 
       case ARTICLES.VIEW.SUCCESS:
         return {
           ...state,
-          article: result
+          article: result[ 0 ]
         }
 
       /* case ARTICLES.CLAP.SUCCESS:

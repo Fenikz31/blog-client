@@ -3,7 +3,7 @@ import { Language, NotificationsNone, Settings } from '@material-ui/icons';
 import styled from 'styled-components';
 import { AppBar, Avatar, Badge, Box, Container, IconButton, Stack, Toolbar, Tooltip, Typography } from '@mui/material';
 import AccountMenu from './menu';
-
+const S3_URL = `${ process.env.S3_URL }`
 export default function Navbar ({ isAuth, profile } = {}) {
   const { avatar, notifications } = profile,
         [ anchorEl, setAnchorEl ] = useState( null ),
@@ -34,7 +34,7 @@ export default function Navbar ({ isAuth, profile } = {}) {
               </IconButton>
             </Tooltip> */}
             <IconButton onClick={ handleClick } >
-              <Avatar alt='avatar' src={`${ avatar }`} sx={{ color: 'white', height: 24, width: 24 }} />
+              <Avatar alt='avatar' src={`${S3_URL}blog/${ avatar }`} sx={{ color: 'white', height: 24, width: 24 }} />
             </IconButton>
           </Stack>
           <AccountMenu anchorEl={ anchorEl } open={ open } onClose={ handleClose } />

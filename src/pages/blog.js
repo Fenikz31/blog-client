@@ -14,10 +14,10 @@ import EditorComponent from '../components/editor';
 import GridComponent from '../components/grid';
 import Modal from '../components/modal';
 
-import { load_articles, publish_article, save_article } from '../redux/actions/articles';
+import { get_article, load_articles, publish_article, save_article } from '../redux/actions/articles';
 
 import { default as grid } from '../../config/grid';
-
+const S3_URL = `${ process.env.S3_URL }`
 export default function Blog () {
   const dispatch = useDispatch(),
         { action, articles, auth } = useSelector(( state )=> state ),
@@ -26,26 +26,35 @@ export default function Blog () {
         parsed = rows.map(({ _id: id, createdAt: created, updatedAt: updated, ...rest }) => ({ id, created, updated, ...rest })),
         [ loading, setLoading ] = useState( true ),
         [ data, setData ] = useState( parsed ),
-        [ preview, setPreview ] = useState( null ),
         [ values, setValues ] = useState({
           title: '',
           description: '',
           published: false,
+          chips: [],
           tags: '',
           text: ''
         }),
+        [ preview, setPreview ] = useState( null ),
         [ modal, setModal ] = useState({
           selected: null,
           title: null,
           type: null
         }),
         [ editor, setEditor ] = useState( false ),
-        [ tagsArray, setTagsArray ] = useState([]),
-        columns = grid.blog.columns;
+        [ tagsChips, setChips ] = useState([]),
+        [ dirty, setDirty ] = useState( false ),
+        { columns, reloadOn } = grid.blog;
+
+  function handleCancel ( event ) {
+    setModal({
+      selected: null,
+      title: null,
+      type: null
+    })
+  }
 
   function handleChange ( event ) {
     const { name, value } = event.target
-    
     setValues({ ...values, [ name ]: value })
   }
 
@@ -55,9 +64,44 @@ export default function Blog () {
     setValues({ ...values, [ name ]: checked })
   }
 
-  function handleClose ( e ) {
+  function handleClose ( event ) {
+    console.log({ modal })
+    setModal({
+      selected: null,
+      title: null,
+      type: null
+    })
+
+    if ( modal.type === 'warning' ) {
+      return handleValidateClose ()
+    }
+
+    if( !modal.type ) {
+      setEditor( false )
+    }
+  }
+
+  function handleCloseEditor ( event ) {
+    if ( dirty ) {
+      return setModal({
+        content: <h4> Your work is not saved. Do you really want to close the editor?</h4>,
+        selected: null,
+        title: 'Warning',
+        type: 'warning',
+      })
+    }
+
     setEditor( false )
-    setData( parsed )
+    /* if ( modal.type === 'warning' ) {
+      return handleValidateClose ()
+    }
+
+    if( !modal.type ) {
+    } */
+  }
+
+  function handleDirty () {
+    setDirty( true )
   }
 
   function handleEditorChange ( value, editor ) {
@@ -67,12 +111,29 @@ export default function Blog () {
   function handleFileChange ( event ) {
     const { name, files } = event.target
     
-    setValues({ ...values, [ name ]: files[0] })
-    setPreview( URL.createObjectURL( files[0] ))
+    setValues({ ...values, [ name ]: files[ 0 ]})
+    setPreview( URL.createObjectURL( files[ 0 ]))
+  }
+
+  function handlePublish ( event ) {
+    dispatch( publish_article({ ...values, published: true, tags: tagsChips.filter(( tag ) => tag.length > 0), token }))
+    
+    setValues({
+      title: '',
+      description: '',
+      published: false,
+      tags: '',
+      text: ''
+    })
+    setChips([])
+    setPreview(null)
+    
+    setEditor( false )
   }
 
   function handlePreview () {
     setModal({
+      content: <img src={ preview } style={{ height: 200 }} />,
       selected: null,
       title: 'Preview',
       type: 'preview'
@@ -80,15 +141,27 @@ export default function Blog () {
   }
 
   function handleRowClick ( params, event ) {
-    setEditor( true )
-    setData( data.filter(({ id }) => id === params.row.id)[ 0 ])
-    setTagsArray( params.row.tags )
+    dispatch( get_article( params.row.id ))
+    setChips( params.row.tags )
     setValues( data.filter(({ id }) => id === params.row.id)[ 0 ])
+    setEditor( true )
+  }
+
+  function handleSave ( params, event ) {
+    dispatch( save_article({ ...values, tags: tagsChips.filter(( tag ) => tag.length > 0 ), token  }))
+  }
+
+  function handleValidateClose () {
+    setEditor( false )
+  }
+
+  function loadData () {    
+    dispatch( load_articles())
   }
 
   function renderCloseButton () {
     if ( editor )
-      return <Button onClick={ handleClose } color='error'  startIcon={ <CloseRounded /> }variant='contained' title='Close'>CLOSE EDITOR</Button>
+      return <Button onClick={ handleCloseEditor } color='error'  startIcon={ <CloseRounded /> }variant='contained' title='Close'>CLOSE EDITOR</Button>
 
     return null
   }
@@ -101,12 +174,12 @@ export default function Blog () {
   }
 
   function renderModal () {
-    const { selected, title, type, rest } = modal
+    const { content, selected, title, type, rest } = modal
 
-    if (type !== null) {
+    if ( type !== null )
       return (
         <Modal
-          actions={{ close: handleClose }}
+          actions={{ cancel: handleCancel, close: handleClose, warning: handleValidateClose }}
           data={ rest }
           id={ selected }
           fullWidth={ true }
@@ -114,22 +187,21 @@ export default function Blog () {
           title={ title }
           type={ type }
         >
-            <img src={ preview } style={{ height: 200 }} />
+          { content }
         </Modal>
       )
-    }
   }
 
   function renderPublishButton () {
     if ( editor && !values.id )
-      return <Button onClick={( e ) => dispatch( publish_article({ ...values, published: true, tags: tagsArray.filter(( tag ) => tag.length > 0), token }))} color='primary'  startIcon={ <PublishRounded /> }variant='contained' title='Publish'>PUBLISH</Button>
+      return <Button color='primary' disabled={ !dirty } onClick={ handlePublish } startIcon={ <PublishRounded /> } variant='contained' title='Publish'>PUBLISH</Button>
 
     return null
   }
 
   function renderSaveButton () {
-    if ( editor )
-      return <Button onClick={( e ) => dispatch( save_article({ ...values, tags: tagsArray.filter(( tag ) => tag.length > 0 ), token  }))} color='primary'  startIcon={ <SaveRounded /> }variant='contained' title='Publish'>SAVE</Button>
+    if ( editor && values.id )
+      return <Button color='primary' disabled={ !dirty } onClick={ handleSave }  startIcon={ <SaveRounded /> } variant='contained' title='Publish'>SAVE</Button>
 
     return null
   }
@@ -166,8 +238,52 @@ export default function Blog () {
   }
 
   useEffect(() => {
+    if ( editor && action === 'ARTICLES.LOAD.SUCCESS' ) {
+      setData( parsed )
+    }
+    
+    if ( reloadOn.indexOf( action ) !== -1 ) {
+      setValues({
+        title: '',
+        description: '',
+        published: false,
+        tags: '',
+        text: ''
+      })
+      dispatch( load_articles())
+    }
+  }, [ action ])
+
+  useEffect(() => {
+    if ( !article.text ) {
+      setDirty( false )
+    }
+  }, [ article ])
+
+  useEffect(() => {
+    // console.log( 'dirty => ', dirty )
+    // console.log( 'modal.type => ', modal.type )
+  }, [ dirty ])
+
+  useEffect(() => {
     dispatch( load_articles())
   }, [ dispatch ])
+
+  useEffect(() => {
+    if ( !editor ) {
+      setChips([])
+      setDirty( false )
+      setPreview( null )
+      setValues({
+        title: '',
+        description: '',
+        published: false,
+        tags: '',
+        text: ''
+      })
+      loadData()
+    }
+  }, [ editor ])
 
   useEffect(() => {
     if ( data.length === 0 && rows.length !== 0 ) {
@@ -176,27 +292,12 @@ export default function Blog () {
   }, [ rows ])
 
   useEffect(() => {
-    
-  }, [ data ])
+    if ( values.feature_img ) {
+      setPreview( `${ S3_URL }${ values.feature_img }` )
+    }
+  }, [ values ])
 
-  useEffect(() => {
-    if ( !editor && !Array.isArray( data )) {
-      setData( parsed )
-    }
-    if ( !editor && action === 'ARTICLES.PUBLISH.SUCCESS' ) {      
-      dispatch( load_articles())
-    }
-
-  }, [ editor ])
-
-  useEffect(() => {
-    if ( action === 'ARTICLES.PUBLISH.SUCCESS' ) {
-      setEditor( false )
-    }
-    if ( action === 'ARTICLES.SAVE.SUCCESS' ) {
-      dispatch( load_articles())
-    }
-  }, [ action ])
+  // console.log( 'blog state dirty => ', dirty, modal )
 
   return (
     <>
@@ -206,6 +307,7 @@ export default function Blog () {
         <>
           <Box sx={{
             // bgcolor: 'background.default',
+            borderBottom: 'solid 1px grey',
             display: 'flex',
             height: 65,
             justifyContent: !editor ? 'flex-start' : 'flex-end',
@@ -242,23 +344,25 @@ export default function Blog () {
                         onChange={ handleChange }
                         onKeyPress={( e ) => {
                           if ([ ',' ].indexOf( e.key ) !== -1 && e.target.value.split(',') )
-                            return setTagsArray( e.target.value.split(',') )
+                            return setChips( e.target.value.split(',') )
                         }}
                         size='small'
-                        variant='outlined'/>
+                        value={ values.tags }
+                        variant='outlined'
+                      />
                       <div style={{ display: 'flex', flexWrap: 'wrap', maxHeight: 85, overflow: 'auto' }}>
-                        { renderTagChips( tagsArray ) }
+                        { renderTagChips( tagsChips ) }
                       </div>
                     </Box>
                     <Stack direction='column' alignItems='center' spacing={ 0.5 } sx ={{ width: '30%' }}>
-                      <FormControlLabel control={ <Checkbox checked={ values.published } name='published' onChange={ handleCheck } /> } label='Published' />
+                      <FormControlLabel control={ <Checkbox checked={ values.published } name='published' onChange={ handleCheck } /> } label={ values.published ? 'Publish' : 'Published' } />
                       { renderUploadButton() }
                       { !preview ? null : <Button onClick={ handlePreview } startIcon={ <PreviewRounded /> } sx={{ width: 180 }} variant='outlined'>Preview</Button> }
                     </Stack>
                   </Box>
                 </Box>
                 <Box sx={{ height: '100%', p:'0 16px 16px 16px', width: '100%' }}>
-                  <EditorComponent data={ data.text } onEditorChange={ handleEditorChange } />
+                  <EditorComponent initialValue={ article.text || '' } onDirty={ handleDirty } onEditorChange={ handleEditorChange } value={ values.text } />
                 </Box>
               </>
             ) :
