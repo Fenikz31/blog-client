@@ -1,21 +1,24 @@
-version: '3'
+version: '3.6'
+
+name: blog-admin
 
 ################################################################################
 # NETWORKS
 ################################################################################
 networks:
-  dev:             # Network name given  for this stack
-    name: dev-network       # Network pre existing name Compose has to look to connect your app's container
+  dev:
 
 ################################################################################
 # SERVICES
 ################################################################################
 services:
-  client:
-    container_name: client-template
+  blog-admin-dev:
+    container_name: blog-admin-dev
     build:
       context: .
       dockerfile: Dockerfile
+      network: host
+      target: dev
     ports:
       - '5001:5001'
     
@@ -27,5 +30,23 @@ services:
     networks:
       - dev
     volumes:
-      - .:/usr/src/service
-      # - ./node_modules:/usr/src/service/node_modules
+      - .:/usr/app/admin
+      - ./node_modules:/usr/app/admin/node_modules
+
+  blog-admin-prod:
+    container_name: blog-admin-prod
+    build:
+      context: .
+      dockerfile: Dockerfile
+      network: host
+      target: prod
+    ports:
+      - '5021:80'
+    
+    # stdin_open: true
+    environment:
+      - CHOKIDAR_USEPOLLING=true
+      - NODE_OPTIONS=--openssl-legacy-provider
+
+    networks:
+      - dev
