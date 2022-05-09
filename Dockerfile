@@ -16,7 +16,7 @@ COPY assets dist
 # ---- Dependencies ----
 FROM base AS dependencies
 # Set environement variables
-ENV S3_URL=http://192.168.0.116:9000/
+ENV S3_URL=http://192.168.0.116:9010/
 
 # install node packages
 

@@ -1,6 +1,6 @@
 version: '3.6'
 
-name: blog-admin
+name: blog_admin
 
 ################################################################################
 # NETWORKS
@@ -12,7 +12,7 @@ networks:
 # SERVICES
 ################################################################################
 services:
-  blog-admin-dev:
+  dev:
     container_name: blog-admin-dev
     build:
       context: .
@@ -33,7 +33,7 @@ services:
       - .:/usr/app/admin
       - ./node_modules:/usr/app/admin/node_modules
 
-  blog-admin-prod:
+  prod:
     container_name: blog-admin-prod
     build:
       context: .
