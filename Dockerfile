@@ -16,7 +16,7 @@ COPY assets dist
 # ---- Dependencies ----
 FROM base AS dependencies
 # Set environement variables
-ENV S3_URL=http://192.168.0.116:9010/
+ENV S3_URL=http://192.168.0.12:9000/
 
 # install node packages
 
@@ -33,7 +33,7 @@ RUN npm install --silent
 # run linters, setup and tests
 FROM dependencies AS dev
 # Set environement variables
-ENV API_URL=http://192.168.0.116:5010/
+ENV API_URL=http://192.168.0.12:5010/
 
 ENV ENV=development
 ENV PASSWORD=123456
@@ -47,7 +47,7 @@ CMD [ "yarn", "dev" ]
 # run linters, setup and tests
 FROM dependencies AS prod
 # Set environement variables
-ENV API_URL=http://192.168.0.116:5020/
+ENV API_URL=http://192.168.0.12:5020/
 ENV ENV=production 
 COPY . . 
 EXPOSE 80 

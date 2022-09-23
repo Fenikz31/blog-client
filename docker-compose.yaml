@@ -1,19 +1,22 @@
 version: '3.6'
 
-name: blog_admin
+name: board
 
 ################################################################################
 # NETWORKS
 ################################################################################
 networks:
   dev:
+    external: true
+  nginxproxymanager_softeam-net:
+    external: true
 
 ################################################################################
 # SERVICES
 ################################################################################
 services:
-  dev:
-    container_name: blog-admin-dev
+  board-dev:
+    container_name: admin-dev
     build:
       context: .
       dockerfile: Dockerfile
@@ -24,17 +27,19 @@ services:
     
     # stdin_open: true
     environment:
+      - API_URL=http://dev:5010
       - CHOKIDAR_USEPOLLING=true
       - NODE_OPTIONS=--openssl-legacy-provider
 
     networks:
       - dev
+      - nginxproxymanager_softeam-net
     volumes:
       - .:/usr/app/admin
       - ./node_modules:/usr/app/admin/node_modules
 
-  prod:
-    container_name: blog-admin-prod
+  board-prod:
+    container_name: admin-prod
     build:
       context: .
       dockerfile: Dockerfile
@@ -45,8 +50,9 @@ services:
     
     # stdin_open: true
     environment:
+      - API_URL=http://prod:5020
       - CHOKIDAR_USEPOLLING=true
       - NODE_OPTIONS=--openssl-legacy-provider
 
     networks:
-      - dev
+      - nginxproxymanager_softeam-net

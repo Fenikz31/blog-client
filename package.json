@@ -6,7 +6,7 @@
   "scripts": {
     "build": "webpack --node-env production  --config ./webpack.prod.config.js",
     "compose": "docker-compose -f docker-compose.prod.yaml --env-file ./.env.prod -p ADMIN-PROD up -d",
-    "dev": "webpack serve --config ./webpack.config.js",
+    "dev": "webpack serve --config ./webpack.config.js --host 0.0.0.0  --node-env development",
     "local": " webpack serve --node-env local",
     "serve:dev": "pm2 start ecosystem.config.js",
     "serve:prod": "pm2-runtime ecosystem.config.js",
